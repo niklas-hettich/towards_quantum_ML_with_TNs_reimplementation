@@ -93,4 +93,4 @@ Immediately after epoch 30 finishes, `main.py` automatically invokes `run_noise_
 
 ## Note on AI Usage
 
-AI (Gemini) was used for code review and for documentation (comments and README). The implementation itself was done without AI.
+AI (Gemini) was used for repository structuring, for code review and for documentation. The implementation itself was done without AI.
