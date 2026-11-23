@@ -1,0 +1,11 @@
+name: quantum_ml
+channels:
+  - conda-forge
+dependencies:
+  - python=3.10
+  - matplotlib
+  - torchvision
+  - ipykernel
+  - numpy
+  - pytorch
+  - tqdm
