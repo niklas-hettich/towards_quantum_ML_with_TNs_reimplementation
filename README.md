@@ -84,8 +84,8 @@ Immediately after epoch 30 finishes, `main.py` automatically invokes `run_noise_
 
 | Evaluation Setting | Test Accuracy | Paper Reference (Huggins et al., 2019) |
 | :--- | :---: | :---: |
-| **Noise-Free (Clean Baseline)** | ~98.5% – 99.1% | 97.6% (Fig. 8) / ~99% (Fig. 9) |
-| **Noise-Inserted ($p_a = 0.039,\; p_d = 0.028$)** | ~96.0% | Slight degradation (~3% drop, Sec. 4.3) |
+| **Noise-Free (Clean Baseline)** | 98.0% – 99.5% | 97.6% (Fig. 8) |
+| **Noise-Inserted ($p_a = 0.039,\; p_d = 0.028$)** | 0.1% – 0.5% drop | 97.1% (Fig. 13) |
 
 *(Exact values vary slightly across runs due to random parameter initialization and stochastic SPSA perturbations.)*
 
