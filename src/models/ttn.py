@@ -10,21 +10,29 @@ class TreeTensorNetwork(nn.Module):
     """
     Tree Tensor Network for 64 inputs -> 1 output.
     Uses 63 unitary blocks arranged in a binary tree structure.
+
+    Attributes:
+        gates (nn.ModuleList): List of 63 UnitaryBlock modules representing
+            the nodes of the binary tree.
     """
     def __init__(self):
         super().__init__()
         self.gates = nn.ModuleList([UnitaryBlock() for _ in range(63)])
 
-    def forward(self, x: torch.Tensor, kraus_ops: list[list[torch.Tensor]] = None) -> torch.Tensor:
+    def forward(self, x: torch.Tensor, kraus_ops: list[list[torch.Tensor]] | None = None) -> torch.Tensor:
         """
-        Processes the input through the TTN.
-        
+        Processes a batch of classical inputs through the Tree Tensor Network.
+
         Args:
-            x: Input tensor of shape (batch_size, 64)
-            
+            x: Input tensor of shape (batch_size, 64) with pixel values in [0, 1].
+            kraus_ops: Optional list of CPTP noise channels (each a list of 2x2
+                Kraus operators) applied to incoming qubits at every node.
+
         Returns:
-            rho: The final density matrix of the single remaining qubit of shape (batch_size, 2, 2)
+            rho: Final density matrix of the single remaining output qubit
+                with shape (batch_size, 2, 2).
         """
+
         states = feature_map(x)
         
         states_ket = states.unsqueeze(-1)          # (batch size, 64, 2, 1)
@@ -57,9 +65,21 @@ class TreeTensorNetwork(nn.Module):
 
 
 
-def apply_node(rho_left: torch.Tensor, rho_right: torch.Tensor, U: torch.Tensor, kraus_ops: list[torch.Tensor] = None) -> torch.Tensor:
+def apply_node(rho_left: torch.Tensor, rho_right: torch.Tensor, U: torch.Tensor, kraus_ops: list[list[torch.Tensor]] | None = None) -> torch.Tensor:
     """
-    Applies gate to 2 unentangled qubits (represented as density matrices) and traces out the right qubit.
+    Applies a 2-qubit unitary gate to two unentangled single-qubit density matrices
+    and traces out one qubit.
+
+    Args:
+        rho_left: Density matrix of the left child qubit of shape (batch_size, 2, 2).
+        rho_right: Density matrix of the right child qubit of shape (batch_size, 2, 2).
+        U: 2-qubit unitary matrix of shape (4, 4).
+        kraus_ops: Optional list of CPTP noise channels applied to both input
+            qubits prior to entanglement. Defaults to None.
+
+    Returns:
+        rho_reduced: Reduced density matrix of the remaining left qubit
+            with shape (batch_size, 2, 2).
     """
 
     if kraus_ops is not None:

@@ -12,6 +12,8 @@ This repository implements a discriminative **Tree Tensor Network (TTN)** quantu
 quantum_ml_tn/
 ├── main.py                  # Training loop, evaluation, and Section 4.3 noise experiment
 ├── README.md                # Project overview, setup, and usage
+├── LICENSE
+├── .gitignore
 ├── environment.yml          # Conda environment specification
 └── src/
     ├── README.md            # Technical documentation of all modules

@@ -6,9 +6,13 @@ def feature_map(x: torch.Tensor) -> torch.Tensor:
     """
     Maps classical normalized input features into single-qubit quantum states.
 
-    x: Tensor of shape (batch_size, N) with values in the range [0, 1], where N is the number of features (e.g., 64 pixels for 8x8 images).
+    Args:
+        x: Tensor of shape (batch_size, N) with values in [0, 1], where N is
+            the number of features (e.g., 64 pixels for 8x8 images).
 
-    Returns: Tensor of shape (batch_size, N, 2), where the last dimension holds the amplitudes [cos(theta), sin(theta)] for state |0> and |1>.
+    Returns:
+        qubit_states: Tensor of shape (batch_size, N, 2) holding the amplitudes
+            [cos(theta), sin(theta)] for basis states |0> and |1>.
     """
     
     theta = 0.5 * math.pi * x

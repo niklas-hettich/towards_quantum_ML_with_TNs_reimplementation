@@ -6,6 +6,12 @@ class UnitaryBlock(nn.Module):
     Parametrized 2-qubit unitary gate U = exp(iH).
     Follows the setup from Huggins et al. (2019) where H is a 4x4 Hermitian matrix.
     A 4x4 Hermitian matrix has exactly 16 free real parameters.
+
+    Attributes:
+        params (nn.Parameter): 1D tensor of 16 trainable real parameters
+            (4 diagonal, 6 upper-triangular real, 6 upper-triangular imaginary).
+        row_idx (list[int]): Row indices for the upper triangle of a 4x4 matrix.
+        col_idx (list[int]): Column indices for the upper triangle of a 4x4 matrix.
     """
     def __init__(self):
         super().__init__()

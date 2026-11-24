@@ -31,7 +31,7 @@ def get_dephasing_kraus(Tg: float, T2: float, device: torch.device) -> list[torc
         device: Torch device.
         
     Returns:
-        A list containing the two Kraus operators [M0, M1, M2] as complex128 tensors.
+        A list containing the three Kraus operators [M0, M1, M2] as complex128 tensors.
     """
     p_d = 1 - math.exp(-Tg / T2)
     

@@ -7,18 +7,37 @@ from src.loss import compute_probabilities, ttn_loss
 from src.optim.spsa import SPSAOptimizer
 from src.noise import get_amplitude_damping_kraus, get_dephasing_kraus
 
-def forward_loss(model, x, y):
+def forward_loss(model: torch.nn.Module, x: torch.Tensor, y: torch.Tensor) -> torch.Tensor:
+    """
+    Performs a forward pass through the TTN and computes the margin loss.
+
+    Args:
+        model: The TreeTensorNetwork model.
+        x: Input batch of flattened images of shape (batch_size, 64).
+        y: True binary class labels of shape (batch_size,).
+
+    Returns:
+        loss: Scalar tensor representing the mean margin loss over the batch.
+    """
+
     rho = model(x)
     probs = compute_probabilities(rho)
     return ttn_loss(probs, y)
 
 
-def evaluate(model: torch.nn.Module, data_loader: torch.utils.data.DataLoader, kraus_ops=None) -> tuple[float, float]:
+def evaluate(model: torch.nn.Module, data_loader: torch.utils.data.DataLoader, kraus_ops: list[list[torch.Tensor]] | None = None) -> tuple[float, float]:
     """
-    Evaluates the model on a dataset.
+    Evaluates the model on a dataset, optionally under simulated quantum noise.
+
+    Args:
+        model: The TreeTensorNetwork model to evaluate.
+        data_loader: DataLoader providing batches of (images, labels).
+        kraus_ops: Optional list of CPTP noise channels (each a list of Kraus operators)
+            applied during tree contraction. Defaults to None (noise-free).
+
     Returns:
         avg_loss: Average loss over all samples.
-        accuracy: Fraction of correctly classified samples.
+        avg_accuracy: Fraction of correctly classified samples.
     """
     model.eval()
     total_loss = 0.0
@@ -43,9 +62,14 @@ def evaluate(model: torch.nn.Module, data_loader: torch.utils.data.DataLoader, k
     return avg_loss, avg_accuracy
 
 
-def run_noise_experiment(model, test_loader):
+def run_noise_experiment(model: torch.nn.Module, test_loader: torch.utils.data.DataLoader) -> None:
     """
-    Evaluates the trained model under the specific noise parameters defined in Section 4.3.
+    Evaluates the trained model under the noise parameters defined in Section 4.3
+    of Huggins et al. (2019) (p_a = 0.039, p_d = 0.028 at T_g = 200 ns).
+
+    Args:
+        model: The trained TreeTensorNetwork model.
+        test_loader: DataLoader for the binary MNIST test set.
     """
     device = next(model.parameters()).device
     
@@ -65,7 +89,11 @@ def run_noise_experiment(model, test_loader):
     print(f"Noisy Accuracy (p_a=0.039, p_d=0.028): {acc_noisy * 100:.2f}%")
 
 
-def train():
+def train() -> None:
+    """
+    Runs the full training pipeline for the binary MNIST (e.g., for 0 vs. 7) TTN classifier
+    using SPSA optimization, followed by the Section 4.3 noise-resilience evaluation.
+    """
     num_epochs = 30
     batch_size = 222
 
